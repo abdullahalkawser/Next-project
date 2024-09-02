@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,12 +13,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { useState } from "react";
 import ImageUpload from "../customui/ImageUpload";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Separator } from "../ui/separator";
+import toast from "react-hot-toast";
 
 // Define the CollectionType interface
 interface CollectionType {
@@ -65,12 +64,21 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     try {
-      // Perform your submit logic here
-      console.log(values);
-      // After successful submission
-      // router.push("/collections");
-    } catch (error) {
-      console.error("Error submitting form:", error);
+      const url = "/api/collections";
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      if (res.ok) {
+        toast.success( "create successfuly");
+        router.push("/collections");
+      } else {
+        toast.error("Failed to create collection. Please try again.");
+      }
+    } catch (err) {
+      console.log("[collections_POST]", err);
+      toast.error("Something went wrong! Please try again.");
     } finally {
       setLoading(false);
     }
@@ -143,7 +151,7 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
           />
           <div className="flex gap-10">
             <Button type="submit" className="bg-red-500 text-white" disabled={loading}>
-              Submit
+              {loading ? "Submitting..." : "Submit"}
             </Button>
             <Button
               type="button"
