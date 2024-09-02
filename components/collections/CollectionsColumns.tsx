@@ -4,13 +4,14 @@ import { ColumnDef } from "@tanstack/react-table";
 
 
 import Delete from "../customui/Delete";
+import Link from "next/link";
 
 export const columns: ColumnDef<CollectionType>[] = [
   {
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => (
-        <p> { row.original.title}</p>
+        <Link href={`/collections/${row.original._id}`}><p className="hover:text-red-500"> { row.original.title}</p></Link>
     ),
   },
   {

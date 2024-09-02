@@ -6,7 +6,7 @@ import { DataTable } from "@/components/customui/DataTable";
 import { columns } from "@/components/collections/CollectionsColumns";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
 import Link from "next/link";
 
 

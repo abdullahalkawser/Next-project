@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+
+import { Separator } from "../ui/separator";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,20 +15,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
-import ImageUpload from "../customui/ImageUpload";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "../ui/textarea";
-import { Separator } from "../ui/separator";
-import toast from "react-hot-toast";
 
-// Define the CollectionType interface
-interface CollectionType {
-  _id?: string;
-  title: string;
-  description: string;
-  image: string;
-}
+import { useState } from "react";
+import toast from "react-hot-toast";
+import ImageUpload from "../customui/ImageUpload";
+import Delete from "../customui/Delete";
+
 
 const formSchema = z.object({
   title: z.string().min(2).max(20),
@@ -35,11 +31,12 @@ const formSchema = z.object({
 });
 
 interface CollectionFormProps {
-  initialData?: CollectionType | null;
+  initialData?: CollectionType | null; //Must have "?" to make it optional
 }
 
 const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
   const router = useRouter();
+
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -53,34 +50,31 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
         },
   });
 
-  const handleKeyPress = (
-    e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>
-  ) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
     }
-  };
-
+  }
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
     try {
-      const url = "/api/collections";
+      setLoading(true);
+      const url = initialData
+        ? `/api/collections/${initialData._id}`
+        : "/api/collections";
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
       if (res.ok) {
-        toast.success( "create successfuly");
+        setLoading(false);
+        toast.success(`Collection ${initialData ? "updated" : "created"}`);
+        window.location.href = "/collections";
         router.push("/collections");
-      } else {
-        toast.error("Failed to create collection. Please try again.");
       }
     } catch (err) {
       console.log("[collections_POST]", err);
       toast.error("Something went wrong! Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -88,11 +82,11 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
     <div className="p-10">
       {initialData ? (
         <div className="flex items-center justify-between">
-          <p className="font-bold">Edit Collection</p>
-          {/* <Delete id={initialData._id} item="collection" /> */}
+          <p className="text-heading2-bold">Edit Collection</p>
+          <Delete id={initialData._id}  />
         </div>
       ) : (
-        <p className="font-extrabold text-2xl">Create Collection</p>
+        <p className="text-heading2-bold">Create Collection</p>
       )}
       <Separator className="bg-grey-1 mt-4 mb-7" />
       <Form {...form}>
@@ -104,11 +98,7 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Title"
-                    {...field}
-                    onKeyDown={handleKeyPress}
-                  />
+                  <Input placeholder="Title" {...field} onKeyDown={handleKeyPress} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -121,12 +111,7 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="Description"
-                    {...field}
-                    rows={5}
-                    onKeyDown={handleKeyPress}
-                  />
+                  <Textarea placeholder="Description" {...field} rows={5} onKeyDown={handleKeyPress} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -150,13 +135,13 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
             )}
           />
           <div className="flex gap-10">
-            <Button type="submit" className="bg-red-500 text-white" disabled={loading}>
-              {loading ? "Submitting..." : "Submit"}
+            <Button type="submit" className="bg-blue-1 text-white">
+              Submit
             </Button>
             <Button
               type="button"
               onClick={() => router.push("/collections")}
-              className="bg-red-500 text-white"
+              className="bg-blue-1 text-white"
             >
               Discard
             </Button>
