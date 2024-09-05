@@ -1,7 +1,8 @@
 import { CldUploadWidget } from "next-cloudinary";
 import { Plus, Trash } from "lucide-react";
-import Image from "next/image";
+
 import { Button } from "../ui/button";
+import Image from "next/image";
 
 interface ImageUploadProps {
   value: string[];
@@ -14,9 +15,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onRemove,
   value,
 }) => {
-  // Handle successful upload
-  const onSuccess = (result: any) => {
-    // Add the new image URL to the value array
+  const onUpload = (result: any) => {
     onChange(result.info.secure_url);
   };
 
@@ -30,31 +29,25 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 <Trash className="h-4 w-4" />
               </Button>
             </div>
-            {/* Use fill and ensure the container has relative positioning */}
-            <div className="relative w-full h-full">
-              <Image
-                src={url}
-                alt="collection"
-                className="object-cover rounded-lg"
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 200px"
-              />
-            </div>
+            <Image
+              src={url}
+              alt="collection"
+              className="object-cover rounded-lg"
+              fill
+            />
           </div>
         ))}
       </div>
 
-      <CldUploadWidget uploadPreset="sspcbe2z" onSuccess={onSuccess}>
-        {({ open }) => (
-          <Button
-            type="button"
-            onClick={() => open()}
-            className="bg-red-500 text-white flex items-center p-2 rounded"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Upload Image
-          </Button>
-        )}
+      <CldUploadWidget uploadPreset="sspcbe2z" onUpload={onUpload}>
+        {({ open }) => {
+          return (
+            <Button type="button" onClick={() => open()} className="bg-red-500 text-white">
+              <Plus className="h-4 w-4 mr-2" />
+              Upload Image
+            </Button>
+          );
+        }}
       </CldUploadWidget>
     </div>
   );

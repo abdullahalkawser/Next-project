@@ -1,9 +1,8 @@
+
 import Collection from "@/lib/models/Collections";
 import { connectToDB } from "@/lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
-
 import { NextRequest, NextResponse } from "next/server";
-
 
 
 export const POST = async (req: NextRequest) => {

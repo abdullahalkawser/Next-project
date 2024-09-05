@@ -20,8 +20,8 @@ import { Textarea } from "../ui/textarea";
 
 import { useState } from "react";
 import toast from "react-hot-toast";
-import ImageUpload from "../customui/ImageUpload";
 import Delete from "../customui/Delete";
+import ImageUpload from "../customui/ImageUpload";
 
 
 const formSchema = z.object({
@@ -135,13 +135,13 @@ const CollectionForm: React.FC<CollectionFormProps> = ({ initialData }) => {
             )}
           />
           <div className="flex gap-10">
-            <Button type="submit" className="bg-blue-1 text-white">
+            <Button type="submit" className="bg-red-500 text-white">
               Submit
             </Button>
             <Button
               type="button"
               onClick={() => router.push("/collections")}
-              className="bg-blue-1 text-white"
+              className="bg-red-500 text-white"
             >
               Discard
             </Button>
